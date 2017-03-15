@@ -86,16 +86,17 @@ void loop() {
      
      switch(STATE){
 
+      //14
       case ST_RST:
             resetTime = millis();
             (resetTime >= resetInterval) ? STATE = ST_IDLE : ST_RST;
             break;
-
+      //15
       case ST_INIT:
             currentTime = millis();
             (currentTime >= calibTime) ? STATE = ST_IDLE : ST_INIT;
             break;
-      
+      //1
       case ST_CAL:
       
            //do nothing.  need to hold position here while EMG sensor calibrates
@@ -104,26 +105,26 @@ void loop() {
            Serial.println((muscData));
            (resetTime >= resetInterval) ? STATE = ST_IDLE : ST_CAL;
            break;
-           
+      //2     
       case ST_IDLE:
       
            myServo.writeMicroseconds(1500);
            Serial.print(F("Value: "));
            Serial.println((muscData));
-           (muscData > oldVal && (muscData - oldVal)) ? STATE = ST_GO : STATE = ST_IDLE;           
+           (muscData > oldVal && (muscData - oldVal >= 50)) ? STATE = ST_GO : STATE = ST_IDLE;           
            break;
-           
+      //3     
       case ST_GO:
 
            Serial.print(F("Value: "));
            Serial.println((muscData));
-           drive = map(muscData, 0, 700, 120, 180);       //Scaling down our value from our EMG sensor from [0-700] to [0-180] ( > 90 to lift leg )
-           myServo.write(drive);
+           //drive = map(muscData, 0, 700, 120, 180);       //Scaling down our value from our EMG sensor from [0-700] to [0-180] ( > 90 to lift leg )
+           myServo.write(160);
            delay(200);
            myServo.writeMicroseconds(1500);
            STATE = ST_STRIDE;           
            break;
-           
+      //4     
       case ST_STRIDE: 
       
            //mid stride now, no need to do anything except check data
@@ -132,13 +133,13 @@ void loop() {
            //(muscData < oldVal && ( oldVal - muscData >= 75) && STATE == ST_STRIDE) ? STATE = ST_PASS : STATE = ST_STRIDE; 
            (muscData < oldVal && ( oldVal - muscData >= 75)) ? STATE = ST_PASS : STATE = ST_STRIDE; 
            break;
-
+      //5
       case ST_PASS: 
 
            Serial.print(F("Value: "));
            Serial.println((muscData));
-           drive = map(muscData, 0, 700, 0, 60);       //Scaling down our value from our EMG sensor from [0-700] to [0-180] ( > 90 to lift leg )
-           myServo.write(drive);
+          // drive = map(muscData, 0, 700, 0, 60);       //Scaling down our value from our EMG sensor from [0-700] to [0-180] ( > 90 to lift leg )
+           myServo.write(20);
            delay(200);
            myServo.writeMicroseconds(1500);
            STATE = ST_IDLE;           
