@@ -111,7 +111,7 @@ void loop() {
            myServo.writeMicroseconds(1500);
            Serial.print(F("Value: "));
            Serial.println((muscData));
-           (muscData > oldVal && (muscData - oldVal >= 50)) ? STATE = ST_GO : STATE = ST_IDLE;           
+           (muscData > oldVal && (muscData - oldVal >= 75)) ? STATE = ST_GO : STATE = ST_IDLE;           
            break;
       //3     
       case ST_GO:
@@ -149,7 +149,7 @@ void loop() {
            break;
      
      }
-      delay(700);
+      delay(200);
       Serial.println(STATE);
       adcStarted = false;
     
