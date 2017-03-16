@@ -97,21 +97,22 @@ void loop() {
             (currentTime >= calibTime) ? STATE = ST_IDLE : ST_INIT;
             break;
       //1
-      case ST_CAL:
+     /* case ST_CAL:
       
-           //do nothing.  need to hold position here while EMG sensor calibrates
+           //do nothing.  need to hold position here while EMG sensor calibrates                     ////currenlty unused for now, might need later
            resetTime = millis();
            Serial.print(F("Value: "));
            Serial.println((muscData));
            (resetTime >= resetInterval) ? STATE = ST_IDLE : ST_CAL;
            break;
+      */
       //2     
       case ST_IDLE:
       
            myServo.writeMicroseconds(1500);
            Serial.print(F("Value: "));
            Serial.println((muscData));
-           (muscData > oldVal && (muscData - oldVal >= 75)) ? STATE = ST_GO : STATE = ST_IDLE;           
+           (muscData > oldVal && (muscData - oldVal >= 100)) ? STATE = ST_GO : STATE = ST_IDLE;           
            break;
       //3     
       case ST_GO:
@@ -131,7 +132,7 @@ void loop() {
            Serial.print(F("Value: "));
            Serial.println((muscData));
            //(muscData < oldVal && ( oldVal - muscData >= 75) && STATE == ST_STRIDE) ? STATE = ST_PASS : STATE = ST_STRIDE; 
-           (muscData < oldVal && ( oldVal - muscData >= 75)) ? STATE = ST_PASS : STATE = ST_STRIDE; 
+           (muscData < oldVal && ( oldVal - muscData >= 100)) ? STATE = ST_PASS : STATE = ST_STRIDE; 
            break;
       //5
       case ST_PASS: 
@@ -153,13 +154,12 @@ void loop() {
       Serial.println(STATE);
       adcStarted = false;
     
-    }
+   }
 
    if(!adcStarted){
 
       ADCSRA |= (1 << ADSC) | (1 << ADIE);
-      adcStarted = true;   
-      rxReady = true;
+      adcStarted = true;  
     
     }    
 
